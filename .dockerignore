@@ -1,0 +1,17 @@
+# DevSecOps: exclude everything not needed in the Docker build context.
+# Keeps build context small and prevents secrets/dev artifacts from leaking
+# into the image layer history.
+
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+.claude
+*.log
+npm-debug.log*
+README.md
+model.manifest.json
+Dockerfile
+.dockerignore

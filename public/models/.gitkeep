@@ -1,0 +1,12 @@
+# Place midas_small.onnx here to enable 3D depth-warp parallax view.
+#
+# Download source:
+#   https://github.com/isl-org/MiDaS/releases
+#   File: midas_v21_small_256.onnx  (~50 MB)
+#
+# After downloading, rename to: midas_small.onnx
+#
+# Also copy the onnxruntime-web WASM backends here:
+#   node_modules/onnxruntime-web/dist/*.wasm  →  public/models/*.wasm
+#
+# (ort.env.wasm.wasmPaths is set to "/models/" in depth-warp.ts)

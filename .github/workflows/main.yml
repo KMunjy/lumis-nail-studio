@@ -1,0 +1,126 @@
+name: CI / CD
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main"]
+
+# Cancel in-progress runs on the same branch to save runners
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # CI — type-check → unit tests → build  (runs on every push + PR)
+  # ────────────────────────────────────────────────────────────────────────────
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    env:
+      # Supabase — required by src/lib/supabase.ts at build time.
+      # Set these in GitHub → Settings → Secrets → Actions.
+      NEXT_PUBLIC_SUPABASE_URL:      ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── 1. Install ────────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 2. Type-check (no emit — fast, catches all TS errors) ─────────────
+      - name: TypeScript
+        run: npx tsc --noEmit
+
+      # ── 3. Unit tests (Vitest) ────────────────────────────────────────────
+      - name: Unit tests
+        run: npm test
+
+      # ── 4. Production build (catches bundler errors, missing env vars) ────
+      - name: Build
+        run: npm run build
+
+      # ── 5. Upload build artefact for deploy job ───────────────────────────
+      - name: Upload build artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: .next/
+          retention-days: 1
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Model health — verify pinned MediaPipe version matches CDN string in source
+  # Runs on CI so version drift is caught before it reaches prod.
+  # ────────────────────────────────────────────────────────────────────────────
+  model-health:
+    name: Model health
+    runs-on: ubuntu-latest
+    needs: ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify MediaPipe version sync
+        run: |
+          # Extract installed version from package-lock.json
+          INSTALLED=$(node -e "const l=require('./package-lock.json'); console.log(l.packages['node_modules/@mediapipe/tasks-vision'].version)")
+          # Extract pinned CDN string from mediapipe.ts
+          CDN=$(grep -oP '(?<=tasks-vision@)[0-9]+\.[0-9]+\.[0-9]+' src/lib/mediapipe.ts)
+          echo "Installed: $INSTALLED   CDN pin: $CDN"
+          if [ "$INSTALLED" != "$CDN" ]; then
+            echo "❌ Version mismatch — update CDN string in src/lib/mediapipe.ts to match $INSTALLED"
+            exit 1
+          fi
+          echo "✅ MediaPipe version in sync: $INSTALLED"
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Docker build — verify the standalone image builds cleanly
+  # Only runs on pushes to main (not on PRs, to save runner minutes)
+  # ────────────────────────────────────────────────────────────────────────────
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      NEXT_PUBLIC_SUPABASE_URL:      ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false   # set to true and add registry credentials to push to registry
+          tags: lumis-nail-studio:${{ github.sha }}
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
