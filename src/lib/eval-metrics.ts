@@ -506,6 +506,156 @@ function _ciede2000(lab1: [number, number, number], lab2: [number, number, numbe
   );
 }
 
+// ─── Fairness & Fitzpatrick-stratified metrics ────────────────────────────────
+
+/**
+ * Fitzpatrick skin tone scale ranges used for fairness stratification.
+ * I-II = very fair, III-IV = medium, V-VI = dark.
+ */
+export type FitzpatrickRange = "I-II" | "III-IV" | "V-VI";
+
+export const FITZPATRICK_RANGES: FitzpatrickRange[] = ["I-II", "III-IV", "V-VI"];
+
+/**
+ * Per-group metric summary for fairness evaluation.
+ */
+export interface GroupMetrics {
+  range:            FitzpatrickRange;
+  sampleCount:      number;
+  meanIoU:          number;
+  meanDice:         number;
+  meanBoundaryF1:   number;
+  meanCuticleError: number;
+  meanDeltaE:       number;
+  passRate:         number; // fraction of samples where allPass === true
+}
+
+/**
+ * Fairness evaluation result across all Fitzpatrick groups.
+ */
+export interface FairnessResult {
+  groups:          GroupMetrics[];
+  /** Max absolute difference in mean IoU between any two groups */
+  maxIoUDelta:     number;
+  /** Max absolute difference in pass rate between any two groups */
+  maxPassRateDelta: number;
+  /** Max absolute difference in mean cuticle error (px) between any two groups */
+  maxCuticleErrorDelta: number;
+  fairnessPass:    boolean;
+  /** Individual threshold checks */
+  checks: {
+    iouDeltaPass:         boolean;
+    passRateDeltaPass:    boolean;
+    cuticleErrorDeltaPass: boolean;
+    allGroupsAboveMinIoU:  boolean;
+  };
+}
+
+/**
+ * Fairness thresholds — maximum allowed inter-group deltas.
+ * Exceeding these indicates systematic bias in the try-on pipeline.
+ */
+export const FAIRNESS_THRESHOLDS = {
+  /** Max IoU gap between any two Fitzpatrick groups */
+  maxIoUDelta:         0.06,
+  /** Max pass-rate gap between any two groups (as fraction, e.g. 0.10 = 10pp) */
+  maxPassRateDelta:    0.10,
+  /** Max mean cuticle error gap in pixels */
+  maxCuticleErrorDelta: 1.5,
+  /** All groups must achieve at least this IoU (not just the average) */
+  minGroupIoU:         0.78,
+} as const;
+
+/**
+ * Compute fairness metrics across Fitzpatrick-stratified sample groups.
+ *
+ * @param samples - Array of { range, suite } pairs where suite is a MetricSuite result
+ */
+export function computeFairnessMetrics(
+  samples: Array<{ range: FitzpatrickRange; suite: MetricSuite }>,
+): FairnessResult {
+  // Group samples by Fitzpatrick range
+  const grouped = new Map<FitzpatrickRange, MetricSuite[]>();
+  for (const range of FITZPATRICK_RANGES) grouped.set(range, []);
+  for (const { range, suite } of samples) {
+    grouped.get(range)!.push(suite);
+  }
+
+  // Compute per-group summary metrics
+  const groups: GroupMetrics[] = FITZPATRICK_RANGES.map((range) => {
+    const suites = grouped.get(range)!;
+    const n = suites.length;
+
+    if (n === 0) {
+      return {
+        range, sampleCount: 0,
+        meanIoU: 0, meanDice: 0, meanBoundaryF1: 0,
+        meanCuticleError: 0, meanDeltaE: 0, passRate: 0,
+      };
+    }
+
+    const sum = suites.reduce(
+      (acc, s) => ({
+        iou:          acc.iou          + s.mask.iou,
+        dice:         acc.dice         + s.mask.dice,
+        boundaryF1:   acc.boundaryF1   + s.mask.boundaryF1,
+        cuticleError: acc.cuticleError + s.geometric.cuticleErrorPx,
+        deltaE:       acc.deltaE       + s.deltaE,
+        passes:       acc.passes       + (s.allPass ? 1 : 0),
+      }),
+      { iou: 0, dice: 0, boundaryF1: 0, cuticleError: 0, deltaE: 0, passes: 0 },
+    );
+
+    return {
+      range,
+      sampleCount:      n,
+      meanIoU:          sum.iou          / n,
+      meanDice:         sum.dice         / n,
+      meanBoundaryF1:   sum.boundaryF1   / n,
+      meanCuticleError: sum.cuticleError / n,
+      meanDeltaE:       sum.deltaE       / n,
+      passRate:         sum.passes       / n,
+    };
+  });
+
+  // Compute inter-group deltas (only for groups with samples)
+  const populated = groups.filter((g) => g.sampleCount > 0);
+
+  function maxDelta(getter: (g: GroupMetrics) => number): number {
+    if (populated.length < 2) return 0;
+    let max = 0;
+    for (let i = 0; i < populated.length; i++) {
+      for (let j = i + 1; j < populated.length; j++) {
+        max = Math.max(max, Math.abs(getter(populated[i]) - getter(populated[j])));
+      }
+    }
+    return max;
+  }
+
+  const maxIoUDelta          = maxDelta((g) => g.meanIoU);
+  const maxPassRateDelta     = maxDelta((g) => g.passRate);
+  const maxCuticleErrorDelta = maxDelta((g) => g.meanCuticleError);
+  const allGroupsAboveMinIoU = populated.every(
+    (g) => g.meanIoU >= FAIRNESS_THRESHOLDS.minGroupIoU,
+  );
+
+  const checks = {
+    iouDeltaPass:          maxIoUDelta          <= FAIRNESS_THRESHOLDS.maxIoUDelta,
+    passRateDeltaPass:     maxPassRateDelta     <= FAIRNESS_THRESHOLDS.maxPassRateDelta,
+    cuticleErrorDeltaPass: maxCuticleErrorDelta <= FAIRNESS_THRESHOLDS.maxCuticleErrorDelta,
+    allGroupsAboveMinIoU,
+  };
+
+  return {
+    groups,
+    maxIoUDelta,
+    maxPassRateDelta,
+    maxCuticleErrorDelta,
+    fairnessPass: Object.values(checks).every(Boolean),
+    checks,
+  };
+}
+
 // ─── Internal boundary/dilation helpers ──────────────────────────────────────
 
 function _extractBoundary(

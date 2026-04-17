@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="2400" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2550" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TITLE BOX
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="title" value="LUMIS Nail Studio — System Architecture v1.0" style="text;html=1;strokeColor=#333333;fillColor=#f5f5f5;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=20;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="40" y="20" width="780" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         LEGEND BOX
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="legend_container" value="Legend" style="swimlane;fontStyle=1;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;startSize=28;" vertex="1" parent="1">
+      <mxGeometry x="880" y="20" width="520" height="310" as="geometry" />
+    </mxCell>
+    <mxCell id="leg1" value="User Device / Browser Layer" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;" vertex="1" parent="legend_container">
+      <mxGeometry x="10" y="40" width="230" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg2" value="Next.js Pages" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="legend_container">
+      <mxGeometry x="10" y="80" width="230" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg3" value="API Routes" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="legend_container">
+      <mxGeometry x="10" y="120" width="230" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg4" value="Security-Critical Shared Libs" style="rounded=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;" vertex="1" parent="legend_container">
+      <mxGeometry x="10" y="160" width="230" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg5" value="External Services" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="legend_container">
+      <mxGeometry x="10" y="200" width="230" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg6" value="CI/CD Pipeline" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="legend_container">
+      <mxGeometry x="10" y="240" width="230" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg7" value="Data Flow (dark grey arrow)" style="text;html=1;fontSize=10;align=left;" vertex="1" parent="legend_container">
+      <mxGeometry x="260" y="40" width="240" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg8" value="Security-Enforced Path (red arrow)" style="text;html=1;fontSize=10;align=left;fontColor=#FF0000;" vertex="1" parent="legend_container">
+      <mxGeometry x="260" y="80" width="240" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg9" value="Trust Boundary (dashed red border)" style="text;html=1;fontSize=10;align=left;fontColor=#FF0000;" vertex="1" parent="legend_container">
+      <mxGeometry x="260" y="120" width="240" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg10" value="DB = Cylinder shape" style="text;html=1;fontSize=10;align=left;" vertex="1" parent="legend_container">
+      <mxGeometry x="260" y="160" width="240" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="leg11" value="Auth Check = Diamond shape" style="text;html=1;fontSize=10;align=left;" vertex="1" parent="legend_container">
+      <mxGeometry x="260" y="200" width="240" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TRUST BOUNDARY 1 — CLIENT
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="trust_client" value="Client Trust Boundary" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#FF0000;strokeWidth=2;dashed=1;fillColor=none;fontSize=13;fontColor=#FF0000;fontStyle=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+      <mxGeometry x="30" y="110" width="1260" height="680" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         LAYER 1 — USER DEVICE (BROWSER)
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="layer1_swim" value="Layer 1 — User Device (Browser)" style="swimlane;fontStyle=1;fontSize=13;fillColor=#DAE8FC;strokeColor=#6C8EBF;startSize=34;horizontal=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="120" width="1240" height="660" as="geometry" />
+    </mxCell>
+
+    <!-- Camera -->
+    <mxCell id="camera" value="Camera&#xa;(getUserMedia)" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;fontStyle=1;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="20" y="60" width="140" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- ConsentBanner -->
+    <mxCell id="consent_banner" value="ConsentBanner&#xa;(GDPR/POPIA Gate)" style="rounded=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=11;fontStyle=1;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="20" y="160" width="140" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- localStorage -->
+    <mxCell id="localstorage" value="localStorage&#xa;consent record&#xa;cart TTL 30d" style="shape=cylinder3;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=10;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="20" y="280" width="140" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- MediaPipe HandLandmarker -->
+    <mxCell id="mediapipe" value="MediaPipe HandLandmarker&#xa;WASM (cdn.jsdelivr.net)&#xa;21-point landmarks" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;fontStyle=1;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="220" y="60" width="180" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- EMA HandSmoother -->
+    <mxCell id="ema_smoother" value="EMA HandSmoother&#xa;(temporal smoothing)" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="450" y="60" width="160" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- TF.js Nail Segmentation -->
+    <mxCell id="tfjs_seg" value="TF.js Nail Segmentation&#xa;(dynamic import, optional)" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="220" y="180" width="180" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- MiDaS ONNX -->
+    <mxCell id="midas" value="MiDaS-Small ONNX&#xa;(onnxruntime-web)&#xa;/public/models/" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="450" y="180" width="160" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- WebGL Depth Warp -->
+    <mxCell id="webgl_depth" value="WebGL Depth Warp&#xa;(depth-warp-gl.ts)" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="680" y="180" width="155" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- Lighting Estimator -->
+    <mxCell id="lighting" value="Lighting Estimator" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="680" y="60" width="155" height="55" as="geometry" />
+    </mxCell>
+
+    <!-- PBR Nail Renderer v2 -->
+    <mxCell id="pbr_renderer" value="PBR Nail Renderer v2&#xa;(WebGL shaders)" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;fontStyle=1;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="900" y="100" width="165" height="65" as="geometry" />
+    </mxCell>
+
+    <!-- Composition Engine -->
+    <mxCell id="comp_engine" value="Composition Engine" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="900" y="210" width="165" height="55" as="geometry" />
+    </mxCell>
+
+    <!-- Canvas Output -->
+    <mxCell id="canvas_output" value="Canvas Output&#xa;(toDataURL / toBlob)" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="1080" y="150" width="140" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- On-Device ML note -->
+    <mxCell id="ondevice_note" value="All ML inference runs entirely on-device.&#xa;No camera frames or landmarks sent to server." style="text;html=1;strokeColor=#6C8EBF;fillColor=#dae8fc;fontSize=10;align=center;whiteSpace=wrap;rounded=1;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="220" y="320" width="500" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Browser API caller box -->
+    <mxCell id="browser_api" value="Browser (API Caller)&#xa;Fetch / XHR with JWT" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=11;fontStyle=1;" vertex="1" parent="layer1_swim">
+      <mxGeometry x="780" y="420" width="175" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- ── Layer 1 internal arrows ── -->
+    <mxCell id="e_cam_mp" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="camera" target="mediapipe" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_mp_ema" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="mediapipe" target="ema_smoother" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_mp_tfjs" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="mediapipe" target="tfjs_seg" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_tfjs_webgl" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="tfjs_seg" target="webgl_depth" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_midas_webgl" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="midas" target="webgl_depth" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ema_pbr" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="ema_smoother" target="pbr_renderer" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_lighting_pbr" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="lighting" target="pbr_renderer" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_webgl_comp" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="webgl_depth" target="comp_engine" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_pbr_comp" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="pbr_renderer" target="comp_engine" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_comp_canvas" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="comp_engine" target="canvas_output" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_consent_ls" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="consent_banner" target="localstorage" parent="layer1_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TRUST BOUNDARY 2 — SERVER
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="trust_server" value="Server Trust Boundary" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#FF0000;strokeWidth=2;dashed=1;fillColor=none;fontSize=13;fontColor=#FF0000;fontStyle=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+      <mxGeometry x="30" y="820" width="1560" height="860" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         LAYER 2 — NEXT.JS APPLICATION (SERVER)
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="layer2_swim" value="Layer 2 — Next.js 16 Application (Server)" style="swimlane;fontStyle=1;fontSize=13;fillColor=#ffffff;strokeColor=#555555;startSize=34;horizontal=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="830" width="1550" height="840" as="geometry" />
+    </mxCell>
+
+    <!-- ── Pages sub-lane ── -->
+    <mxCell id="pages_sub" value="Pages (App Router)" style="swimlane;fontStyle=1;fontSize=11;fillColor=#D5E8D4;strokeColor=#82B366;startSize=28;horizontal=1;" vertex="1" parent="layer2_swim">
+      <mxGeometry x="10" y="44" width="680" height="370" as="geometry" />
+    </mxCell>
+
+    <mxCell id="pg_home" value="/ (Homepage)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="10" y="40" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_auth" value="/auth&#xa;(Supabase SSO + magic link)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="160" y="40" width="155" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_studio_id" value="/studio/[id]&#xa;(AR try-on + 3D parallax)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="335" y="40" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_studio_shoot" value="/studio/shoot&#xa;(NailShoot video)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="500" y="40" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_marketplace" value="/marketplace&#xa;(role selector)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="10" y="110" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_dna" value="/profile/dna&#xa;(NailDNA)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="160" y="110" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_looks" value="/account/looks" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="310" y="110" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_loyalty" value="/account/loyalty" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="460" y="110" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_admin" value="/admin&#xa;(admin dashboard)" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="10" y="180" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="pg_creator" value="/(creator)/dashboard" style="rounded=1;fillColor=#D5E8D4;strokeColor=#82B366;fontSize=10;" vertex="1" parent="pages_sub">
+      <mxGeometry x="160" y="180" width="150" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- ── Shared Security Libs ── -->
+    <mxCell id="sec_libs_sub" value="Shared Security Libraries" style="swimlane;fontStyle=1;fontSize=11;fillColor=#F8CECC;strokeColor=#B85450;startSize=28;horizontal=1;" vertex="1" parent="layer2_swim">
+      <mxGeometry x="10" y="440" width="680" height="140" as="geometry" />
+    </mxCell>
+
+    <mxCell id="auth_guard" value="auth-guard.ts&#xa;requireAuth / requireRole&#xa;fails closed → 503" style="rounded=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=11;fontStyle=1;" vertex="1" parent="sec_libs_sub">
+      <mxGeometry x="30" y="40" width="270" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="rate_limit" value="rate-limit.ts&#xa;in-memory sliding window&#xa;per IP per bucket" style="rounded=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=11;fontStyle=1;" vertex="1" parent="sec_libs_sub">
+      <mxGeometry x="330" y="40" width="270" height="70" as="geometry" />
+    </mxCell>
+
+    <!-- ── API Routes sub-lane ── -->
+    <mxCell id="api_sub" value="API Routes (all protected by auth-guard + rate-limit)" style="swimlane;fontStyle=1;fontSize=11;fillColor=#FFE6CC;strokeColor=#D6B656;startSize=28;horizontal=1;" vertex="1" parent="layer2_swim">
+      <mxGeometry x="710" y="44" width="820" height="760" as="geometry" />
+    </mxCell>
+
+    <!-- Public routes -->
+    <mxCell id="api_products_get" value="GET /api/products&#xa;public · 60/min" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="10" y="40" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_referral" value="POST /api/referral&#xa;public · 30/min" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="200" y="40" width="170" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Auth-required routes -->
+    <mxCell id="api_products_post" value="POST /api/products&#xa;creator|admin · 20/min" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="10" y="110" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_orders" value="GET+POST /api/orders&#xa;auth · 20/min" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="200" y="110" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_consent" value="POST /api/consent&#xa;auth" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="390" y="110" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_consent_wd" value="POST /api/consent/withdraw&#xa;auth" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="580" y="110" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_erasure" value="POST /api/erasure&#xa;auth" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="10" y="180" width="170" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Admin / creator routes -->
+    <mxCell id="api_admin_stats" value="GET /api/admin/stats&#xa;admin only · 20/min" style="rounded=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="200" y="180" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_creator_stats" value="GET /api/creator/stats&#xa;creator|admin · 20/min" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="390" y="180" width="170" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- HMAC routes -->
+    <mxCell id="api_adtoken_claim" value="POST /api/ad-token/claim&#xa;HMAC sig · 10/min" style="rounded=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="580" y="180" width="170" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="api_adtoken_verify" value="GET /api/ad-token/verify&#xa;10/min" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="10" y="250" width="170" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Auth decision diamonds -->
+    <mxCell id="diamond_admin" value="requireRole&#xa;admin?" style="rhombus;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="220" y="340" width="130" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="diamond_auth" value="requireAuth&#xa;JWT valid?" style="rhombus;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="420" y="340" width="130" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="diamond_hmac" value="HMAC-SHA256&#xa;valid?" style="rhombus;fillColor=#F8CECC;strokeColor=#B85450;fontSize=10;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="600" y="340" width="130" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="deny_403" value="403 Forbidden" style="rounded=1;fillColor=#FF0000;fontColor=#FFFFFF;strokeColor=#AE4132;fontSize=11;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="220" y="460" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="deny_401" value="401 Unauthorized" style="rounded=1;fillColor=#FF0000;fontColor=#FFFFFF;strokeColor=#AE4132;fontSize=11;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="420" y="460" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="deny_403b" value="403 Bad Sig" style="rounded=1;fillColor=#FF0000;fontColor=#FFFFFF;strokeColor=#AE4132;fontSize=11;fontStyle=1;" vertex="1" parent="api_sub">
+      <mxGeometry x="600" y="460" width="130" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- Stripe PaymentIntent node inside API sub -->
+    <mxCell id="stripe_intent_node" value="→ POST Stripe&#xa;PaymentIntent (server-side)" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="api_sub">
+      <mxGeometry x="200" y="560" width="180" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Arrows inside api_sub: admin check -->
+    <mxCell id="e_adminstats_diamond" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#B85450;strokeWidth=2;" edge="1" source="api_admin_stats" target="diamond_admin" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_diamond_admin_deny" value="no → 403" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;strokeWidth=2;fontColor=#FF0000;fontSize=9;" edge="1" source="diamond_admin" target="deny_403" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <!-- orders check -->
+    <mxCell id="e_orders_diamond" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#B85450;strokeWidth=2;" edge="1" source="api_orders" target="diamond_auth" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_diamond_auth_deny" value="no → 401" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;strokeWidth=2;fontColor=#FF0000;fontSize=9;" edge="1" source="diamond_auth" target="deny_401" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <!-- HMAC check -->
+    <mxCell id="e_adclaim_diamond" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#B85450;strokeWidth=2;" edge="1" source="api_adtoken_claim" target="diamond_hmac" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_diamond_hmac_deny" value="no → 403" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;strokeWidth=2;fontColor=#FF0000;fontSize=9;" edge="1" source="diamond_hmac" target="deny_403b" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <!-- orders → stripe -->
+    <mxCell id="e_orders_stripe_intent" value="PaymentIntent" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="api_orders" target="stripe_intent_node" parent="api_sub">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TRUST BOUNDARY 3 — EXTERNAL SAAS
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="trust_saas" value="External SaaS Boundary" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];shape=mxgraph.lean_mapping.electronic_info_flow_edge;strokeColor=#FF0000;strokeWidth=2;dashed=1;fillColor=none;fontSize=13;fontColor=#FF0000;fontStyle=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+      <mxGeometry x="30" y="1720" width="1860" height="560" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         LAYER 3 — EXTERNAL SERVICES
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="layer3_swim" value="Layer 3 — External Services" style="swimlane;fontStyle=1;fontSize=13;fillColor=#E1D5E7;strokeColor=#9673A6;startSize=34;horizontal=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="1730" width="1840" height="540" as="geometry" />
+    </mxCell>
+
+    <!-- Supabase Auth -->
+    <mxCell id="supa_auth" value="Supabase Auth&#xa;JWT issuance&#xa;Google/Apple SSO&#xa;Magic Link" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=11;fontStyle=1;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="20" y="60" width="180" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- Supabase Postgres -->
+    <mxCell id="supa_pg" value="Supabase Postgres&#xa;profiles · products · orders&#xa;order_items · saved_looks&#xa;try_on_sessions · ad_tokens&#xa;shade_definitions · user_consent" style="shape=cylinder3;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;fontStyle=1;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="230" y="50" width="210" height="120" as="geometry" />
+    </mxCell>
+
+    <!-- Supabase Storage -->
+    <mxCell id="supa_storage" value="Supabase Storage&#xa;saved look thumbnails" style="shape=cylinder3;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=11;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="470" y="60" width="180" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- Stripe -->
+    <mxCell id="stripe_ext" value="Stripe&#xa;PaymentIntent API&#xa;server-side only" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=11;fontStyle=1;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="680" y="60" width="180" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- Ad Networks -->
+    <mxCell id="ad_networks" value="Ad Networks&#xa;AdMob / IronSource / Unity&#xa;HMAC SSV callback" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=11;fontStyle=1;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="890" y="60" width="180" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- MediaPipe CDN -->
+    <mxCell id="mp_cdn" value="MediaPipe CDN&#xa;cdn.jsdelivr.net&#xa;WASM + model files" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=11;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="1100" y="60" width="180" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- Google Fonts CDN -->
+    <mxCell id="gfonts" value="Google Fonts CDN&#xa;DM Sans&#xa;JetBrains Mono&#xa;Cormorant" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=11;" vertex="1" parent="layer3_swim">
+      <mxGeometry x="1310" y="60" width="180" height="90" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         LAYER 4 — CI/CD PIPELINE
+    ═══════════════════════════════════════════════════════════════ -->
+    <mxCell id="layer4_swim" value="Layer 4 — CI/CD Pipeline (GitHub Actions)" style="swimlane;fontStyle=1;fontSize=13;fillColor=#FFF2CC;strokeColor=#D6B656;startSize=34;horizontal=1;" vertex="1" parent="1">
+      <mxGeometry x="1640" y="120" width="1620" height="820" as="geometry" />
+    </mxCell>
+
+    <!-- GitHub push trigger -->
+    <mxCell id="gh_push" value="GitHub Push&#xa;(any branch)" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=11;fontStyle=1;" vertex="1" parent="layer4_swim">
+      <mxGeometry x="20" y="60" width="150" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- CI Job -->
+    <mxCell id="ci_job" value="Job: ci" style="swimlane;fontStyle=1;fontSize=11;fillColor=#FFF2CC;strokeColor=#D6B656;startSize=26;" vertex="1" parent="layer4_swim">
+      <mxGeometry x="220" y="44" width="400" height="300" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_checkout" value="1. actions/checkout" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="20" y="40" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_node" value="2. Setup Node 20" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="200" y="40" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_npmci" value="3. npm ci" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="20" y="100" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_tsc" value="4. tsc --noEmit" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="200" y="100" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_vitest" value="5. vitest" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="20" y="160" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_build" value="6. next build" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="200" y="160" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="ci_artifact" value="7. Upload artifact" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="ci_job">
+      <mxGeometry x="110" y="230" width="180" height="35" as="geometry" />
+    </mxCell>
+
+    <!-- model-health job -->
+    <mxCell id="model_health_job" value="Job: model-health" style="swimlane;fontStyle=1;fontSize=11;fillColor=#FFF2CC;strokeColor=#D6B656;startSize=26;" vertex="1" parent="layer4_swim">
+      <mxGeometry x="660" y="44" width="380" height="180" as="geometry" />
+    </mxCell>
+    <mxCell id="mh_checkout" value="1. actions/checkout" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="model_health_job">
+      <mxGeometry x="20" y="40" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="mh_check" value="2. MediaPipe CDN&#xa;version sync check" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="model_health_job">
+      <mxGeometry x="200" y="40" width="160" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="mh_result" value="3. Pass / Fail alert" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="model_health_job">
+      <mxGeometry x="110" y="110" width="160" height="35" as="geometry" />
+    </mxCell>
+
+    <!-- docker job -->
+    <mxCell id="docker_job" value="Job: docker (main branch only)" style="swimlane;fontStyle=1;fontSize=11;fillColor=#FFF2CC;strokeColor=#D6B656;startSize=26;" vertex="1" parent="layer4_swim">
+      <mxGeometry x="1080" y="44" width="500" height="240" as="geometry" />
+    </mxCell>
+    <mxCell id="dj_buildx" value="1. docker/setup-buildx-action" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="docker_job">
+      <mxGeometry x="20" y="40" width="210" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="dj_cache" value="2. GHA build cache" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;" vertex="1" parent="docker_job">
+      <mxGeometry x="260" y="40" width="200" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="dj_build_push" value="3. Build + Push&#xa;lumis-nail-studio image" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;fontStyle=1;" vertex="1" parent="docker_job">
+      <mxGeometry x="130" y="130" width="240" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- CI job step connectors -->
+    <mxCell id="e_ci1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="ci_checkout" target="ci_node" parent="ci_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ci2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="ci_npmci" target="ci_tsc" parent="ci_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ci3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="ci_vitest" target="ci_artifact" parent="ci_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_ci4" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="ci_build" target="ci_artifact" parent="ci_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_mh1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="mh_checkout" target="mh_check" parent="model_health_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_mh2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="mh_check" target="mh_result" parent="model_health_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_dj1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="dj_buildx" target="dj_build_push" parent="docker_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_dj2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="dj_cache" target="dj_build_push" parent="docker_job">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- GitHub push → jobs -->
+    <mxCell id="e_gh_ci" value="trigger" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="gh_push" target="ci_job" parent="layer4_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_gh_mh" value="trigger" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="gh_push" target="model_health_job" parent="layer4_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e_gh_docker" value="trigger (main only)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;" edge="1" source="gh_push" target="docker_job" parent="layer4_swim">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         KEY DATA FLOWS (cross-boundary labelled arrows)
+         All defined in parent="1" (root)
+    ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- Flow 1: Camera → MediaPipe → Renderer (on-device only) -->
+    <mxCell id="flow1_label" value="[1] on-device only, no server upload&#xa;Camera → MediaPipe (21 landmarks) → Renderer" style="text;html=1;strokeColor=#6C8EBF;fillColor=#DAE8FC;fontSize=10;align=center;whiteSpace=wrap;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="790" width="500" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- Flow 2: Browser → POST /api/consent → Supabase user_consent -->
+    <mxCell id="flow2" value="[2] JWT + consent record" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;fontSize=9;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" source="browser_api" target="api_consent" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1312" y="1740" />
+          <mxPoint x="1312" y="1050" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Flow 3: Browser → POST /api/orders → Supabase orders → Stripe PaymentIntent -->
+    <mxCell id="flow3a" value="[3] server-side, JWT required" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;fontColor=#FF0000;fontSize=9;strokeWidth=2;" edge="1" source="browser_api" target="api_orders" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1312" y="1740" />
+          <mxPoint x="1312" y="1010" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="flow3b" value="PaymentIntent (server→Stripe)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;fontColor=#FF0000;fontSize=9;strokeWidth=2;" edge="1" source="stripe_intent_node" target="stripe_ext" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Flow 4: Ad Network → HMAC SSV → /api/ad-token/claim → Supabase ad_tokens -->
+    <mxCell id="flow4a" value="[4] HMAC-SHA256 verified SSV" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;fontColor=#FF0000;fontSize=9;strokeWidth=2;" edge="1" source="ad_networks" target="api_adtoken_claim" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="980" y="1740" />
+          <mxPoint x="980" y="1280" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Flow 5: Browser → GET /api/admin/stats → auth-guard (requireRole admin) → Supabase -->
+    <mxCell id="flow5" value="[5] 403 if not admin" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;fontColor=#FF0000;fontSize=9;strokeWidth=2;" edge="1" source="browser_api" target="api_admin_stats" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1312" y="1780" />
+          <mxPoint x="1312" y="1080" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Flow 6: GitHub push → Actions CI → tsc + vitest + build (gate before deploy) -->
+    <mxCell id="flow6_label" value="[6] gate before deploy: tsc + vitest + next build" style="text;html=1;strokeColor=#D6B656;fillColor=#FFF2CC;fontSize=10;align=center;whiteSpace=wrap;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="1650" y="960" width="380" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- API routes → auth-guard (security) -->
+    <mxCell id="e_api_authguard" value="auth check" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;strokeWidth=2;fontColor=#FF0000;fontSize=9;" edge="1" source="api_orders" target="auth_guard" parent="layer2_swim">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="870" y="760" />
+          <mxPoint x="240" y="760" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e_api_authguard2" value="role check" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;strokeWidth=2;fontColor=#FF0000;fontSize=9;" edge="1" source="api_admin_stats" target="auth_guard" parent="layer2_swim">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="960" y="780" />
+          <mxPoint x="260" y="780" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e_ratelimit_api" value="rate gate" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF0000;strokeWidth=2;fontColor=#FF0000;fontSize=9;" edge="1" source="rate_limit" target="api_products_get" parent="layer2_swim">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="600" y="520" />
+          <mxPoint x="750" y="520" />
+          <mxPoint x="750" y="100" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- API routes → Supabase Postgres (cross-boundary) -->
+    <mxCell id="e_api_supa_pg" value="SQL queries (JWT RLS)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673A6;fontSize=9;" edge="1" source="api_products_get" target="supa_pg" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="820" y="1780" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e_consent_supa" value="write user_consent" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673A6;fontSize=9;" edge="1" source="api_consent" target="supa_pg" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1280" y="1800" />
+          <mxPoint x="340" y="1800" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e_adtoken_supa" value="write ad_tokens" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673A6;fontSize=9;" edge="1" source="api_adtoken_claim" target="supa_pg" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1310" y="1810" />
+          <mxPoint x="340" y="1810" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Pages → Supabase Auth (cross-boundary) -->
+    <mxCell id="e_auth_page_supa" value="SSO + JWT refresh" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673A6;fontSize=9;" edge="1" source="pg_auth" target="supa_auth" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="280" y="1830" />
+          <mxPoint x="110" y="1830" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Supabase Storage (looks thumbnails) -->
+    <mxCell id="e_orders_supa_storage" value="store look thumbnails" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9673A6;fontSize=9;" edge="1" source="api_orders" target="supa_storage" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="960" y="1820" />
+          <mxPoint x="560" y="1820" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- MediaPipe CDN → Browser (WASM load) -->
+    <mxCell id="e_mp_cdn_browser" value="WASM + model files (CDN load)" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;fontSize=9;" edge="1" source="mp_cdn" target="mediapipe" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1190" y="1720" />
+          <mxPoint x="1190" y="640" />
+          <mxPoint x="310" y="640" />
+          <mxPoint x="310" y="250" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Google Fonts CDN → browser (font load) -->
+    <mxCell id="e_gfonts_browser" value="font assets" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;fontSize=9;" edge="1" source="gfonts" target="pg_home" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1400" y="1720" />
+          <mxPoint x="1400" y="660" />
+          <mxPoint x="125" y="660" />
+          <mxPoint x="125" y="880" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- model-health job → MediaPipe CDN -->
+    <mxCell id="e_mh_mp_cdn" value="CDN version check" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#D6B656;fontSize=9;" edge="1" source="model_health_job" target="mp_cdn" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2210" y="940" />
+          <mxPoint x="2210" y="1770" />
+          <mxPoint x="1190" y="1770" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- CI job → deployment gate label -->
+    <mxCell id="e_ci_deploy_gate" value="[6] gate before deploy" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#D6B656;fontColor=#6E4F00;fontSize=9;fontStyle=1;" edge="1" source="ci_job" target="docker_job" parent="layer4_swim">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="620" y="620" />
+          <mxPoint x="1080" y="620" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+  </root>
+</mxGraphModel>

@@ -414,6 +414,44 @@ export const CameraView = forwardRef<CameraViewRef, CameraViewProps>(
           className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${facingMode === "user" ? "scale-x-[-1]" : ""}`}
         />
 
+        {/* ── AI Transparency disclosure (POPIA §18 / responsible AI) ─────── */}
+        {/* Displayed during active tracking so users know the output is simulated */}
+        <div
+          aria-label="AI simulation notice"
+          style={{
+            position: "absolute",
+            top: 12,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 90,
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            backgroundColor: "rgba(10,9,7,0.70)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 50,
+            padding: "4px 12px",
+            pointerEvents: "none",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <span style={{
+            width: 5, height: 5, borderRadius: "50%",
+            backgroundColor: "rgba(255,140,60,0.85)",
+            flexShrink: 0,
+          }} />
+          <span style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 8,
+            letterSpacing: "0.14em",
+            color: "rgba(249,246,242,0.45)",
+            textTransform: "uppercase",
+            whiteSpace: "nowrap",
+          }}>
+            Simulated overlay · results vary by lighting &amp; skin tone
+          </span>
+        </div>
+
         {/* Cinematic depth vignette */}
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse 100% 80% at 50% 60%, transparent 40%, rgba(10,9,7,0.55) 100%)" }} />
