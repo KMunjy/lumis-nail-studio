@@ -183,18 +183,18 @@ The following must be resolved before public launch:
 **P0 — Must fix before any user traffic:**
 1. ✅ Auth bypass eliminated (Sprint 0 — DONE)
 2. ✅ Rate limiting on all routes (Sprint 0 — DONE)
-3. ⬜ Sentry error monitoring integrated
-4. ⬜ Video upload size limit enforced
+3. ✅ Sentry error monitoring integrated (Sprint 4 — DONE)
+4. ✅ Video upload size limit enforced (Sprint 4 — DONE)
 
 **P1 — Must fix before marketing launch:**
-5. ⬜ Creator verification frontend complete
+5. ✅ Creator verification frontend complete (Sprint 4 — DONE)
 6. ⬜ Real-image Fitzpatrick fairness test evidence
-7. ⬜ Upstash Redis rate limiting (for multi-instance)
-8. ⬜ MiDaS model file in deployment artefact
+7. ✅ Upstash Redis rate limiting — adapter + fallback (Sprint 4 — DONE)
+8. ⬜ MiDaS model file in deployment artefact (ops step — MODELS.md updated)
 
 **P2 — Must fix within 30 days post-launch:**
 9. ⬜ Shade calibration per Fitzpatrick range
-10. ⬜ Signed URLs for saved look images
+10. ✅ Signed URLs for saved look images (Sprint 5 — DONE)
 11. ⬜ SRI hash on MediaPipe CDN
 
 ### What justifies GO WITH CONDITIONS (not NO-GO)

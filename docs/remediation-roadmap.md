@@ -313,20 +313,20 @@ This roadmap translates the governance gaps identified in the Sprint 3 audit int
 
 ## Completion Tracking
 
-| Gap ID | Item | Owner | Target Sprint | Status |
-|--------|------|-------|---------------|--------|
-| G-03 | Sentry integration | Engineering | Sprint 4 | ⬜ Open |
-| G-07 | Video upload size limit | Engineering | Sprint 4 | ⬜ Open |
-| G-04 | Creator verification frontend | Engineering | Sprint 4 | ⬜ Open |
-| G-01 | Real-image Fitzpatrick dataset | Product + Legal | Sprint 4/5 | ⬜ Open |
-| G-06 | Upstash Redis rate limiting | Engineering | Sprint 4 | ⬜ Open |
-| G-05 | MiDaS model in deployment | Ops | Sprint 4 | ⬜ Open |
-| G-02 | Shade calibration | ML Engineering | Sprint 5 | ⬜ Open |
-| G-08 | Signed URLs for saved looks | Engineering | Sprint 5 | ⬜ Open |
-| G-09 | SRI hash on MediaPipe | Engineering | Sprint 5 | ⬜ Open |
-| G-12 | Low-light + occlusion tests | QA | Sprint 5/6 | ⬜ Open |
+| Gap ID | Item | Owner | Sprint | Status |
+|--------|------|-------|--------|--------|
+| G-03 | Sentry integration | Engineering | Sprint 4 | ✅ Done — `sentry.client.config.ts`, `sentry.server.config.ts`, `monitoring.ts` activated |
+| G-07 | Video upload size limit | Engineering | Sprint 4 | ✅ Done — `/api/video-processor` route with 25 MB cap + MIME validation |
+| G-04 | Creator verification frontend | Engineering | Sprint 4 | ✅ Done — `/creator/verify` page, `/api/creator/verification` GET/POST/PATCH, admin queue |
+| G-01 | Real-image Fitzpatrick dataset | Product + Legal | Sprint 4/5 | ⬜ Open — requires dataset licensing decision |
+| G-06 | Upstash Redis rate limiting | Engineering | Sprint 4 | ✅ Done — `rateLimitAsync()` + Upstash adapter, in-memory fallback |
+| G-05 | MiDaS model in deployment | Ops | Sprint 4 | ⬜ Open (ops step) — `MODELS.md` updated with download + CI verify steps |
+| G-02 | Shade calibration | ML Engineering | Sprint 5 | ⬜ Open — awaiting real dataset |
+| G-08 | Signed URLs for saved looks | Engineering | Sprint 5 | ✅ Done — `saved-looks.ts` uses `createSignedUrl`, `/api/saved-looks` returns signed URLs only |
+| G-09 | SRI hash on MediaPipe | Engineering | Sprint 5 | ⬜ Open — CDN vendoring planned |
+| G-12 | Low-light + occlusion tests | QA | Sprint 5 | ✅ Done — 14 new scenario tests in `fitzpatrick-fairness.test.ts` |
 | G-10 | Advertiser onboarding | Product | Sprint 6+ | ⬜ Open |
-| G-11 | Admin audit log UI | Engineering | Sprint 5 | ⬜ Open |
+| G-11 | Admin audit log UI | Engineering | Sprint 5 | ✅ Done — audit-log tab in admin page + `/api/admin/audit-log` with CSV export |
 
 ---
 

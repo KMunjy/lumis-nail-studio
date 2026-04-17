@@ -51,29 +51,46 @@ export interface ApiEvent {
 
 const IS_PROD = process.env.NODE_ENV === "production";
 
-// ── Internal send function (replace with SDK integration) ─────────────────────
+// ── Sentry availability ────────────────────────────────────────────────────────
+
+/**
+ * Whether Sentry is configured for this runtime.
+ * Checks for the DSN — works both client-side (NEXT_PUBLIC_SENTRY_DSN)
+ * and server-side (SENTRY_DSN).
+ */
+function _isSentryConfigured(): boolean {
+  if (typeof process === "undefined") return false;
+  return Boolean(
+    process.env.NEXT_PUBLIC_SENTRY_DSN ??
+    process.env.SENTRY_DSN,
+  );
+}
+
+// ── Internal send function ─────────────────────────────────────────────────────
 
 function _sendToBackend(event: LogEvent): void {
-  // ── Sentry integration (uncomment when Sentry is configured) ──────────────
-  // import * as Sentry from "@sentry/nextjs";
-  // if (event.level === "error") {
-  //   Sentry.captureMessage(event.message, {
-  //     level: "error",
-  //     tags: { domain: event.domain },
-  //     extra: event.data,
-  //   });
-  // }
+  // ── Sentry integration — active when DSN is configured ────────────────────
+  if (_isSentryConfigured() && (event.level === "error" || event.level === "warn")) {
+    // Dynamic import avoids bundling Sentry in environments where it's not needed
+    import("@sentry/nextjs").then((Sentry) => {
+      Sentry.captureMessage(event.message, {
+        level:  event.level === "error" ? "error" : "warning",
+        tags:   { domain: event.domain },
+        extra:  { ...event.data, sessionId: event.sessionId },
+      });
+    }).catch(() => { /* Sentry unavailable — silent */ });
+  }
 
-  // ── Axiom / Datadog integration (uncomment when configured) ───────────────
+  // ── Axiom / Datadog integration (activate when configured) ────────────────
   // fetch("/api/logs", { method: "POST", body: JSON.stringify(event) });
 
-  // Current: structured console output
-  const prefix = `[LUMIS:${event.domain}]`;
+  // ── Structured console output (always active in dev; errors/warns in prod) ─
+  const prefix  = `[LUMIS:${event.domain}]`;
   const payload = event.data ? JSON.stringify(event.data) : "";
 
   switch (event.level) {
     case "debug": if (!IS_PROD) console.debug(prefix, event.message, payload); break;
-    case "info":  console.info(prefix, event.message, payload);  break;
+    case "info":  if (!IS_PROD) console.info(prefix, event.message, payload);  break;
     case "warn":  console.warn(prefix, event.message, payload);  break;
     case "error": console.error(prefix, event.message, payload); break;
   }

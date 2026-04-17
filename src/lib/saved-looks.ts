@@ -164,8 +164,8 @@ async function _saveToSupabase(
       return _saveToLocalStorage(userId, productId, productName, imageDataUrl, style);
     }
 
-    // Get signed URL (1 hour — client refreshes on load)
-    const { data: urlData } = supabase.storage.from("looks").getPublicUrl(path);
+    // Get signed URL — 1-hour expiry. Never expose raw storage path (P2-2 — G-08).
+    const { data: urlData } = await supabase.storage.from("lumis-private").createSignedUrl(path, 3600);
 
     const { data, error } = await supabase
       .from("saved_looks")
@@ -189,7 +189,7 @@ async function _saveToSupabase(
       userId,
       productId,
       productName,
-      imageUrl:    urlData?.publicUrl ?? imageDataUrl,
+      imageUrl:    urlData?.signedUrl ?? imageDataUrl,
       shape:       (data.shape   as NailShape)  ?? "Almond",
       finish:      (data.finish  as NailFinish) ?? "Gloss",
       style,
@@ -255,7 +255,7 @@ export async function getUserLooks(userId: string): Promise<SavedLook[]> {
 
     if (error || !data) return [];
 
-    return (data as Array<{
+    return Promise.all((data as Array<{
       id: string;
       product_id: string;
       product_name: string;
@@ -265,11 +265,14 @@ export async function getUserLooks(userId: string): Promise<SavedLook[]> {
       finish: string;
       style_json: Record<string, unknown>;
       created_at: string;
-    }>).map((row) => {
+    }>).map(async (row) => {
       let imageUrl = row.thumbnail_b64 ?? "";
       if (row.storage_path) {
-        const { data: urlData } = supabase.storage.from("looks").getPublicUrl(row.storage_path);
-        imageUrl = urlData?.publicUrl ?? imageUrl;
+        // Use signed URL — never expose raw storage path to client (P2-2 — G-08)
+        const { data: urlData } = await supabase.storage
+          .from("lumis-private")
+          .createSignedUrl(row.storage_path, 3600);
+        imageUrl = urlData?.signedUrl ?? imageUrl;
       }
       return {
         id:          row.id,
@@ -282,7 +285,7 @@ export async function getUserLooks(userId: string): Promise<SavedLook[]> {
         style:       (row.style_json ?? {}) as Partial<NailStyle>,
         createdAt:   row.created_at,
       };
-    });
+    }));
   } catch {
     return [];
   }

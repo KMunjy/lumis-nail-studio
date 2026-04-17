@@ -1,21 +1,24 @@
 /**
- * rate-limit.ts — In-memory sliding-window rate limiter for LUMIS API routes.
+ * rate-limit.ts — Sliding-window rate limiter for LUMIS API routes (P1-3 — G-06).
  *
- * Design:
- *   • Keyed by IP address (x-forwarded-for → first hop, or x-real-ip).
- *   • Separate rate-limit "buckets" per route namespace so limits are independent.
- *   • Sliding window: each request is timestamped; old entries are pruned.
- *   • For MVP single-instance deployment. Replace with Upstash Redis for
- *     multi-instance / edge deployments.
+ * Two-tier design:
+ *   TIER 1 (Upstash Redis) — used when UPSTASH_REDIS_REST_URL + TOKEN are set.
+ *     Shared counter across all serverless function instances.
+ *     Algorithm: sliding window via @upstash/ratelimit.
  *
- * Usage:
- *   const { ok, response } = rateLimit(req, "orders", { max: 60, windowMs: 60_000 });
+ *   TIER 2 (In-memory) — fallback for local dev / single-instance deployments.
+ *     Keyed by IP + bucket. Stale entries pruned every 5 minutes.
+ *     NOT suitable for multi-instance deployments.
+ *
+ * Usage (unchanged at call sites):
+ *   const { ok, response } = rateLimit(req, "orders", LIMITS.sensitive);
  *   if (!ok) return response!;
  *
- * Default limits (overridable per call):
- *   • General routes:       60 req / 60 s  per IP
- *   • Sensitive routes:     20 req / 60 s  per IP
- *   • Ad-token endpoints:   10 req / 60 s  per IP (separate from session limit)
+ * Default limits:
+ *   • General:   60 req / 60 s
+ *   • Sensitive: 20 req / 60 s
+ *   • Ad-token:  10 req / 60 s
+ *   • Referral:  30 req / 60 s
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -46,6 +49,74 @@ export const LIMITS = {
   adToken:   { max: 10,  windowMs: 60_000 },   // 10 req/min
   referral:  { max: 30,  windowMs: 60_000 },   // 30 req/min
 } satisfies Record<string, RateLimitOptions>;
+
+// ── Upstash Redis adapter (Tier 1) ────────────────────────────────────────────
+
+/**
+ * Attempt a rate-limit check via Upstash Redis.
+ * Returns null if Upstash is not configured, so the caller falls back to in-memory.
+ */
+async function _upstashRateLimit(
+  ip: string,
+  bucket: string,
+  options: RateLimitOptions,
+): Promise<RateLimitResult | null> {
+  const redisUrl   = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!redisUrl || !redisToken) return null;
+
+  try {
+    const { Ratelimit } = await import("@upstash/ratelimit");
+    const { Redis }     = await import("@upstash/redis");
+
+    const redis  = new Redis({ url: redisUrl, token: redisToken });
+    const window = `${Math.floor(options.windowMs / 1000)} s` as `${number} s`;
+
+    // Lazily create limiter per bucket (cached in closure via module-level map)
+    let limiter = _upstashLimiters.get(bucket);
+    if (!limiter) {
+      limiter = new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(options.max, window),
+        prefix:  "lumis",
+      });
+      _upstashLimiters.set(bucket, limiter);
+    }
+
+    const identifier    = `${bucket}:${ip}`;
+    const { success, limit, remaining, reset } = await limiter.limit(identifier);
+
+    if (!success) {
+      const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+      return {
+        ok: false,
+        remaining: 0,
+        response: NextResponse.json(
+          { error: "Too many requests. Please slow down." },
+          {
+            status: 429,
+            headers: {
+              "Retry-After":           String(retryAfter),
+              "X-RateLimit-Limit":     String(limit),
+              "X-RateLimit-Remaining": "0",
+              "X-RateLimit-Reset":     String(Math.ceil(reset / 1000)),
+            },
+          },
+        ),
+      };
+    }
+
+    return { ok: true, remaining, response: null };
+  } catch (err) {
+    // If Upstash is unreachable, fall through to in-memory
+    console.warn("[rate-limit] Upstash unavailable, falling back to in-memory:", err);
+    return null;
+  }
+}
+
+// Module-level cache of Upstash Ratelimit instances (one per bucket)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const _upstashLimiters = new Map<string, any>();
 
 // ── In-memory store ───────────────────────────────────────────────────────────
 
@@ -89,14 +160,42 @@ function getClientIp(req: NextRequest): string {
  * @param bucket    - Logical bucket name (e.g. "orders", "admin", "ad-token")
  * @param options   - Optional override for max and windowMs
  */
+export async function rateLimitAsync(
+  req: NextRequest,
+  bucket: string,
+  options: RateLimitOptions = LIMITS.general,
+): Promise<RateLimitResult> {
+  const ip = getClientIp(req);
+
+  // Try Upstash first (shared across instances)
+  const upstashResult = await _upstashRateLimit(ip, bucket, options);
+  if (upstashResult !== null) return upstashResult;
+
+  // Fallback to in-memory
+  return _inMemoryRateLimit(ip, bucket, options);
+}
+
+/**
+ * Synchronous in-memory rate limit — same interface as before.
+ * Use this when you cannot await (e.g. middleware).
+ * For API routes, prefer rateLimitAsync() which uses Upstash when available.
+ */
 export function rateLimit(
   req: NextRequest,
   bucket: string,
   options: RateLimitOptions = LIMITS.general,
 ): RateLimitResult {
+  const ip = getClientIp(req);
+  return _inMemoryRateLimit(ip, bucket, options);
+}
+
+function _inMemoryRateLimit(
+  ip: string,
+  bucket: string,
+  options: RateLimitOptions,
+): RateLimitResult {
   const { max, windowMs } = options;
   const now = Date.now();
-  const ip  = getClientIp(req);
 
   pruneStaleEntries(now);
 

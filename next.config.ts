@@ -27,9 +27,11 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdn.jsdelivr.net",
       // Workers: blob: for MediaPipe Web Worker bootstrap
       "worker-src 'self' blob:",
-      // Network: Supabase API + MediaPipe WASM + model downloads
+      // Network: Supabase, Sentry telemetry, Upstash Redis (rate-limiter), MediaPipe CDN
       // *.supabase.co covers Auth, REST, Realtime and Storage endpoints.
-      "connect-src 'self' https://*.supabase.co https://cdn.jsdelivr.net https://storage.googleapis.com",
+      // *.ingest.sentry.io — Sentry error + performance telemetry (P0-1)
+      // *.upstash.io — Upstash Redis REST API for shared rate-limiting (P1-3)
+      "connect-src 'self' https://*.supabase.co https://cdn.jsdelivr.net https://storage.googleapis.com https://*.ingest.sentry.io https://*.upstash.io",
       // Images: data URIs (canvas toDataURL) + external product images
       "img-src 'self' data: blob: https://images.unsplash.com https://storage.googleapis.com",
       // Styles: Next.js injects inline styles
